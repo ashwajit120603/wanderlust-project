@@ -33,7 +33,6 @@ const  reviewRouter=require("./routes/review.js");
 
 
 
-//  const MONGO_URL="mongodb://127.0.0.1:27017/wanderlust";
 
 const dbUrl=process.env.ATLASDB_URL;
 
@@ -74,14 +73,14 @@ const store=MongoStore.create({
 const sessionOptions={
   store,
 
-  secret:"mysupersecretcode",
+  secret:process.env.SECRET,
   resave:false,
   saveUninitialized:true,
   cookie:{
     expires:Date.now()+7*24*60*60*1000,
     maxAge:7*24*60*60*1000,
     httpOnly:true,
-  },
+  },  
 
 };
 
