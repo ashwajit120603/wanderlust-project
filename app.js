@@ -32,21 +32,25 @@ const  reviewRouter=require("./routes/review.js");
 
 
 
+const dbUrl = process.env.ATLASDB_URL;
 
+if (!dbUrl) {
+  console.error("❌ ERROR: Missing MongoDB Connection String! Set ATLASDB_URL in your environment variables.");
+  process.exit(1); // Stop the server if the database URL is missing
+}
 
-const dbUrl=process.env.ATLASDB_URL;
+main()
+  .then(() => {
+    console.log("✅ Connected to MongoDB successfully!");
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB Connection Failed:", err);
+  });
 
- main()
- .then(()=>{
-    console.log("connected to db");
+async function main() {
+  await mongoose.connect(dbUrl);
+}
 
- })
- .catch((err)=>{
-    console.log(err);
- });
- async function main(){
-   await mongoose.connect(dbUrl);
- }
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
 app.use(express.urlencoded({extended:true}));
@@ -65,9 +69,8 @@ const store=MongoStore.create({
   touchAfter:24*3600,
   
   });
-  store.on("error",()=>{
-    console.log("ERROR in MONGO SESSION STORE",err);
-
+  store.on("error", (err) => {
+    console.error("❌ ERROR in MONGO SESSION STORE:", err);
   });
 
 const sessionOptions={
