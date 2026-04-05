@@ -20,6 +20,7 @@ const flash=require("connect-flash");
 const passport=require("passport");
 const LocalStrategy=require("passport-local");
 const User=require("./models/user.js");
+const initData = require("./init/data.js"); 
 
 
 const {listingSchema,reviewSchema}=require("./schema.js");
@@ -122,6 +123,20 @@ app.use((req,res,next)=>{
   res.locals.currUser=req.user;
   
   next();
+});
+
+
+
+app.get("/init", async (req, res) => {
+  await Listing.deleteMany({});
+  await Listing.insertMany(
+    initData.data.map(obj => ({
+      ...obj,
+      owner: "67b58c4c504c963ef5b62175"
+    }))
+  );
+
+  res.send("Database initialized");
 });
 
 // app.get("/demouser",async(req,res)=>{
